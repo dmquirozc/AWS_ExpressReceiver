@@ -59,6 +59,7 @@ var server = net.createServer(function(socket) {
           time: time,
           imei: imei
         })
+        console.log(packets[packets.length -1 ])
         i=i+10;
         dat = dat.slice(11,-1)
       }else if(type == 0x41)
