@@ -9,6 +9,21 @@ var certificate = fs.readFileSync('cert.pem', 'utf8');
 
 var credentials = {key: privateKey, cert: certificate};
 
+var types = {
+  imei: {
+    type: 1,
+    time: 4,
+    imei: 7
+  },
+  gps: {
+    type: 1,
+    time1: 4,
+    time2: 4,
+    n: 1,
+    positionX: 3,
+    positionY: 3
+  }
+}
 
 const port = 3000;
 const dataPort =  3001;
@@ -40,30 +55,34 @@ var server = net.createServer(function(socket) {
   socket.on('data', data => 
   {
     
-    var dat =   data.toString();
-    console.log("data:",data.buffer);
+    var dat =   Buffer(data.buffer);
+    console.log("data:",dat);
     var i = 0;
     var packets = [];
-
+    console.log(dat[0])
     for(let i = 0; dat.length > 0; i++)
     {
-      var type = dat.charCodeAt(0);
+      var type = dat[0];
       if(type == 0x40) //imei
       {
         
         console.log("type: IMEI");
-        var time = dat.charCodeAt(1);
-        var mask = 256.0;
-        for(let k = 2; k < 4; k++){
-          time+= dat.charCodeAt(k)*mask;
-          mask=mask*256.0;
+        console.log("chartAt 1:",dat[1])
+        var time = dat[1];
+        var mask = 1;
+        for(let k = 2; k <= 4; k++){
+          console.log("CharCode at", k,": ",dat[k])
+          time+= (dat[k] << (8*mask));
+          console.log("time:",time)
+          mask++;
         } 
         //var time = (dat.charCodeAt(1) << 24 | dat.charCodeAt(2) << 16 | dat.charCodeAt(3) << 8 | dat.charCodeAt(4));
-        var imei = (dat.charCodeAt(5) )
-        mask = 256.0;
-        for(let k = 6; k < 11; k++){
-          imei+= dat.charCodeAt(k)*mask;
-          mask=mask*256.0;
+        var imei = (dat[5] )
+        mask = 256;
+        for(let k = 6; k <= 11; k++){
+          console.log("CharCode at", k,": ",dat[k])
+          imei+= (dat[k]*mask);
+          mask=mask*256;
         } 
         packets.push({
           type: type,
@@ -76,7 +95,76 @@ var server = net.createServer(function(socket) {
       }else if(type == 0x42)
       {
         console.log("type: GPS")
-        dat = dat.slice(1,-1)
+        type = dat[0];
+        var npos = dat[1];
+        var aux = data.slice(2,6)
+        var time1,time2 ;
+        var mask = 256;
+        for(let k = 0; k < 3; k++)
+        { 
+          if(k > 0)
+          {
+            time1+= aux[k]*mask;
+            mask= mask*256;
+          }else{
+            time1+= aux[k];
+          }
+        }
+        aux = dat.slice(6,10); 
+        for(let k = 0; k < 3; k++)
+        { 
+          if(k > 0)
+          {
+            time2+= aux[k]*mask;
+            mask= mask*256;
+          }else{
+            time2+= aux[k];
+          }
+        }
+        var positions = [];
+        aux = dat.slice(10,10 + npos*6 + 1);
+        for(let k = 0; k < npos; k++)
+        {
+          var lat= 0, lon= 0;
+          
+          for(let j = 0; j < 6; j++)
+          {
+            if(j <3){
+              mask = 256;
+              if(j%3){
+                lat+=aux[j]*mask;
+                mask=mask*256;
+              }else{
+                lat+=aux[j];
+              }
+                
+            }else{
+              mask = 256;
+              if(j%3){
+                lat+=aux[j]*mask;
+                mask=mask*256;
+              }else{
+                lat+=aux[j];
+              }
+            }
+          }
+          aux = aux.slice(6,-1);
+          positions.push(
+            {
+              lat: lat,
+              lon: lon
+            }
+          )
+        }
+        packets.push({
+          type: type,
+          npos: npos,
+          time1: time1,
+          time2: time2,
+          positions: positions
+        })
+      
+        dat = dat.slice( 10 + npos*6 ,-1);
       }else{
         dat = dat.slice(1,-1)
       }
