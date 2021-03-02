@@ -39,7 +39,32 @@ var server = net.createServer(function(socket) {
   })
   socket.on('data', data => 
   {
-    console.log("data:", data);
+    
+    var dat =   data.toString();
+    console.log("data:",dat);
+    var i = 0;
+    var packets = [];
+
+    while(dat.length() > 0)
+    {
+      var type = dat.charCodeAt(0);
+      if(type == 0x40) //imei
+      {
+        
+        console.log("type: IMEI");
+        var time = (dat.charCodeAt(1) << 24 | dat.charCodeAt(2) << 16 | dat.charCodeAt(3) << 8 | dat.charCodeAt(4));
+        var imei = (dat.charCodeAt(5) << 48 | dat.charCodeAt(6) << 40| dat.charCodeAt(7) << 32| dat.charCodeAt(8) << 24| dat.charCodeAt(9) << 16 | dat.charCodeAt(10) << 8| dat.charCodeAt(11))
+        packets.push({
+          type: type,
+          time: time,
+          imei: imei
+        })
+        dat = dat.slice(11,-1)
+      }else if(type == 0x41)
+      {
+        console.log("type: GPS")
+      }
+    }
     var sql = "SELECT * FROM development.gps_sm limit 1;"
     connection.query(sql, function (err, result) {
       if (err){
