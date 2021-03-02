@@ -53,17 +53,17 @@ var server = net.createServer(function(socket) {
         
         console.log("type: IMEI");
         var time = dat.charCodeAt(1);
-        var mask = 256;
-        for(let k = 2; k <= 4; k++){
+        var mask = 256.0;
+        for(let k = 2; k < 4; k++){
           time+= dat.charCodeAt(k)*mask;
-          mask=mask*256;
+          mask=mask*256.0;
         } 
         //var time = (dat.charCodeAt(1) << 24 | dat.charCodeAt(2) << 16 | dat.charCodeAt(3) << 8 | dat.charCodeAt(4));
         var imei = (dat.charCodeAt(5) )
-        mask = 256;
-        for(let k = 6; k <= 11; k++){
+        mask = 256.0;
+        for(let k = 6; k < 11; k++){
           imei+= dat.charCodeAt(k)*mask;
-          mask=mask*256;
+          mask=mask*256.0;
         } 
         packets.push({
           type: type,
