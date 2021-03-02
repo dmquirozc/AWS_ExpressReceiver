@@ -45,7 +45,7 @@ var server = net.createServer(function(socket) {
     var i = 0;
     var packets = [];
 
-    while(dat.length() > 0)
+    for(let i = 0; dat.length > 0; i++)
     {
       var type = dat.charCodeAt(0);
       if(type == 0x40) //imei
@@ -59,10 +59,14 @@ var server = net.createServer(function(socket) {
           time: time,
           imei: imei
         })
+        i=i+10;
         dat = dat.slice(11,-1)
       }else if(type == 0x41)
       {
         console.log("type: GPS")
+        dat = dat.slice(1,-1)
+      }else{
+        dat = dat.slice(1,-1)
       }
     }
     var sql = "SELECT * FROM development.gps_sm limit 1;"
