@@ -52,8 +52,19 @@ var server = net.createServer(function(socket) {
       {
         
         console.log("type: IMEI");
-        var time = (dat.charCodeAt(1) << 24 | dat.charCodeAt(2) << 16 | dat.charCodeAt(3) << 8 | dat.charCodeAt(4));
-        var imei = (dat.charCodeAt(5) << 48 | dat.charCodeAt(6) << 40| dat.charCodeAt(7) << 32| dat.charCodeAt(8) << 24| dat.charCodeAt(9) << 16 | dat.charCodeAt(10) << 8| dat.charCodeAt(11))
+        var time = dat.charCodeAt(1);
+        var mask = 256;
+        for(let k = 2; k <= 4; k++){
+          time+= dat.charCodeAt(k)*mask;
+          mask=mask*2;
+        } 
+        //var time = (dat.charCodeAt(1) << 24 | dat.charCodeAt(2) << 16 | dat.charCodeAt(3) << 8 | dat.charCodeAt(4));
+        var imei = (dat.charCodeAt(5) )
+        mask = 256;
+        for(let k = 6; k <= 11; k++){
+          time+= dat.charCodeAt(k)*mask;
+          mask=mask*2;
+        } 
         packets.push({
           type: type,
           time: time,
