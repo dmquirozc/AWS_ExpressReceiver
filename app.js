@@ -62,7 +62,7 @@ var server = net.createServer(function(socket) {
         var imei = (dat.charCodeAt(5) )
         mask = 256;
         for(let k = 6; k <= 11; k++){
-          time+= dat.charCodeAt(k)*mask;
+          imei+= dat.charCodeAt(k)*mask;
           mask=mask*2;
         } 
         packets.push({
