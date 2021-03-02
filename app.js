@@ -62,6 +62,7 @@ var server = net.createServer(function(socket) {
     console.log(dat[0])
     for(let i = 0; dat.length > 0; i++)
     {
+      console.log("dat:",dat)
       var type = dat[0];
       if(type == 0x40) //imei
       {
@@ -91,14 +92,14 @@ var server = net.createServer(function(socket) {
         })
         console.log(packets[packets.length -1 ])
         i=i+10;
-        dat = dat.slice(11,-1)
+        dat = dat.slice(12,dat.length)
       }else if(type == 0x42)
       {
         console.log("type: GPS")
         type = dat[0];
         var npos = dat[1];
-        var aux = data.slice(2,6)
-        var time1,time2 ;
+        var aux = dat.slice(2,6)
+        var time1=0,time2 =0;
         var mask = 256;
         for(let k = 0; k < 3; k++)
         { 
@@ -109,6 +110,7 @@ var server = net.createServer(function(socket) {
           }else{
             time1+= aux[k];
           }
+          console.log("time1:", time1)
         }
         aux = dat.slice(6,10); 
         for(let k = 0; k < 3; k++)
@@ -126,33 +128,39 @@ var server = net.createServer(function(socket) {
         for(let k = 0; k < npos; k++)
         {
           var lat= 0, lon= 0;
-          
+
           for(let j = 0; j < 6; j++)
           {
             if(j <3){
-              mask = 256;
+              
               if(j%3){
                 lat+=aux[j]*mask;
                 mask=mask*256;
               }else{
                 lat+=aux[j];
+                mask = 256;
               }
+              console.log("lat:", lat,"j:",j)
                 
             }else{
-              mask = 256;
+             
               if(j%3){
-                lat+=aux[j]*mask;
+                lon+=aux[j]*mask;
                 mask=mask*256;
               }else{
-                lat+=aux[j];
+                lon+=aux[j];
+                mask = 256;
               }
+              console.log("lon:", lon,"j:",j)
             }
           }
-          aux = aux.slice(6,-1);
+          aux = aux.slice(6,aux.length);
           positions.push(
             {
-              lat: lat,
-              lon: lon
+              lat: ((((lat - 0.5)/16777214.0) - 0.5)*180.0).toFixed(4),
+              lon: ((((lon - 0.5 )/16777216.0) -0.5)*360.0).toFixed(4),
+              latnum : ((((lat - 0.5)/16777214.0) - 0.5)*180.0),
+              lonnum : ((((lon - 0.5 )/16777216.0) -0.5)*360.0)
             }
           )
         }
@@ -163,8 +171,8 @@ var server = net.createServer(function(socket) {
           time2: time2,
           positions: positions
         })
-      
-        dat = dat.slice( 10 + npos*6 ,-1);
+        console.log(packets[packets.length -1])
+        dat = dat.slice( 10 + npos*6 ,dat.length);
       }else{
         dat = dat.slice(1,-1)
       }
