@@ -1,7 +1,8 @@
 var net = require('net');
-
+var addr ="https://3.16.100.199:3000/";
+var ip ="3.16.100.199"
 var client = new net.Socket();
-client.connect(3001, '127.0.0.1', function() {
+client.connect(3001, ip, function() {
 	console.log('Connected');
 	client.write('Hello, server! Love, Client.');
     setTimeout(()=> {

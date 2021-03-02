@@ -19,32 +19,36 @@ var  connection  = mysql.createConnection({
   password: "tA9wIyVSzPEJHdMtGzhp"
 });
 
+connection.connect(function(err) {
+  if (err) 
+  {
+    console.log("Database err",err) 
+    throw err;
+  }
+  console.log("Connected to database!");
+ 
+});
+
 
 
 var server = net.createServer(function(socket) {
 	//socket.write('Echo server\r\n');
 	console.log("tcp connection");
-
+  socket.on('connect', ()=>{
+    socket.write("Hola");
+  })
   socket.on('data', data => 
   {
     console.log("data:", data);
-
-    connection.connect(function(err) {
-      if (err) 
-      {
-        console.log("Database err",err) 
+    var sql = "SELECT * FROM development.gps_sm limit 1;"
+    connection.query(sql, function (err, result) {
+      if (err){
+        console.log("SQL err",err) 
         throw err;
       }
-      console.log("Connected to database!");
-      var sql = "SELECT * FROM development.gps_sm limit 1;"
-      connection.query(sql, function (err, result) {
-        if (err){
-          console.log("SQL err",err) 
-          throw err;
-        }
-        console.log("Result: " ,result);
-      });
+      console.log("Result: " ,result);
     });
+    
   })
   socket.on('error', err =>
   {
@@ -53,7 +57,8 @@ var server = net.createServer(function(socket) {
   
   socket.pipe(socket);
 });
-server.listen(dataPort, '127.0.0.1');
+
+server.listen(dataPort);
 
 
 var httpsServer = https.createServer(credentials, app);
