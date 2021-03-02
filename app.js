@@ -41,7 +41,7 @@ var server = net.createServer(function(socket) {
   {
     
     var dat =   data.toString();
-    console.log("data:",dat);
+    console.log("data:",data.buffer);
     var i = 0;
     var packets = [];
 
@@ -52,18 +52,18 @@ var server = net.createServer(function(socket) {
       {
         
         console.log("type: IMEI");
-        var time = dat.charCodeAt(4);
+        var time = dat.charCodeAt(1);
         var mask = 256;
-        for(let k = 4; k >= 2; k--){
+        for(let k = 2; k <= 4; k++){
           time+= dat.charCodeAt(k)*mask;
-          mask=mask*2;
+          mask=mask*256;
         } 
         //var time = (dat.charCodeAt(1) << 24 | dat.charCodeAt(2) << 16 | dat.charCodeAt(3) << 8 | dat.charCodeAt(4));
-        var imei = (dat.charCodeAt(11) )
+        var imei = (dat.charCodeAt(5) )
         mask = 256;
-        for(let k = 10; k >= 6; k--){
+        for(let k = 6; k <= 11; k++){
           imei+= dat.charCodeAt(k)*mask;
-          mask=mask*2;
+          mask=mask*256;
         } 
         packets.push({
           type: type,
@@ -73,7 +73,7 @@ var server = net.createServer(function(socket) {
         console.log(packets[packets.length -1 ])
         i=i+10;
         dat = dat.slice(11,-1)
-      }else if(type == 0x41)
+      }else if(type == 0x42)
       {
         console.log("type: GPS")
         dat = dat.slice(1,-1)
