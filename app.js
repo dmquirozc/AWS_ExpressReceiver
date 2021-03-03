@@ -160,6 +160,7 @@ var server = net.createServer(function(socket) {
           aux = aux.slice(6,aux.length);
           positions.push(
             {
+            
               lat: ((((lat - 0.5)/16777214.0) - 0.5)*180.0).toFixed(6),
               lon: ((((lon - 0.5 )/16777216.0) -0.5)*360.0).toFixed(6),
               latnum : ((((lat - 0.5)/16777214.0) - 0.5)*180.0),
@@ -243,7 +244,9 @@ function sqlInsert(packet, imei_){
     var date = new Date().toISOString();
     for(let i = 0; i < packet.npos; i++)
     {
-      sql.push([`${imei_}`, `${packet.positions[i].latnum}`, `${packet.positions[i].lonnum}`, `${packet.time1}`, formatDate(date)]);
+      //sql.push([`${imei_}`, `${packet.positions[i].lat}`, `${packet.positions[i].lon}`, `${packet.time1}`, formatDate(date)]);
+      sql.push([`${imei_}`, packet.positions[i].lat, packet.positions[i].lon, `${packet.time1}`, formatDate(date)]);
+      
     }
   }
   
