@@ -160,8 +160,8 @@ var server = net.createServer(function(socket) {
           aux = aux.slice(6,aux.length);
           positions.push(
             {
-              lat: ((((lat - 0.5)/16777214.0) - 0.5)*180.0).toFixed(4),
-              lon: ((((lon - 0.5 )/16777216.0) -0.5)*360.0).toFixed(4),
+              lat: ((((lat - 0.5)/16777214.0) - 0.5)*180.0).toFixed(6),
+              lon: ((((lon - 0.5 )/16777216.0) -0.5)*360.0).toFixed(6),
               latnum : ((((lat - 0.5)/16777214.0) - 0.5)*180.0),
               lonnum : ((((lon - 0.5 )/16777216.0) -0.5)*360.0)
             }
