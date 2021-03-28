@@ -232,7 +232,7 @@ var server = net.createServer(function(socket) {
             lonnum : ((((lon - 0.5 )/16777216.0) -0.5)*360.0)
           }
         })
-        dat = dat.slice(22,dat.length)
+        dat = dat.slice(21,dat.length)
         console.log("Dat:",dat)
       }else{
         dat = dat.slice(1,-1)
@@ -240,14 +240,22 @@ var server = net.createServer(function(socket) {
     }
     //INSERT INTO  (`id_lora_devices_data`, `imei`, `latitude`, `longitude`, `millis`, `date_entry`) VALUES ('1', '111111111', '90.0', '-180.0', '11111', '2020-10-10 00:00:00');
     var sqls = [];
+    var loraSqls = [];
     for(let i = 0; i < packets.length; i++)
     {
-      sqls = sqls.concat(sqlInsert(packets[i],imei_));
+      if(packets[i].type !== 0x91)
+      {
+        sqls = sqls.concat(sqlInsert(packets[i],imei_));
+      }else{
+        loraSqls = loraSql.concat(sqlInsert(packets[i],imei_));
+      }
+      
 
     }
     //var sql1 = "INSERT INTO `development`.`lora_devices_data` (`ime"
     console.log("SQLS:",sqls)
-    sql =  `INSERT INTO lora_devices_data (\`imei\`, \`latitude\`, \`longitude\`, \`millis\`, \`date_entry\`) VALUES ?`;
+    var sql =  `INSERT INTO lora_devices_data (\`imei\`, \`latitude\`, \`longitude\`, \`millis\`, \`date_entry\`) VALUES ?`;
+    var loraSql = `INSERT INTO lora_devices_messages  (\`lora_imei\`, \`longitude\`, \`latitude\`, \`hour\`, \`seconds\`, \`minutes\`, \`centiseconds\`, \`microseconds\`, \`date_entry\`) VALUES ?`;
     // for(let i = 0; i < sqls.length; i++)
     // {
       connection.query({sql: sql,timeout: 40000,},[sqls], function (err, result) {
@@ -308,6 +316,22 @@ function sqlInsert(packet, imei_){
   }else if(packet.type == 0x91)
   {
     console.log("Lora Messege:", packet)
+    // packets.push({
+    //   type: type,
+    //   imei: imei,
+    //   hour: hour,
+    //   minute: minute, 
+    //   second : seconds,
+    //   centi: centi,
+    //   micros:  micros,
+    //   position: {
+    //     lat: ((((lat - 0.5)/16777214.0) - 0.5)*180.0).toFixed(6),
+    //     lon: ((((lon - 0.5 )/16777216.0) -0.5)*360.0).toFixed(6),
+    //     latnum : ((((lat - 0.5)/16777214.0) - 0.5)*180.0),
+    //     lonnum : ((((lon - 0.5 )/16777216.0) -0.5)*360.0)
+    //   }
+    // })
+    sql.push([`${packet.imei}`, packet.position.lat, packet.position.lon, `${packet.hour}`,`${packet.minute}`,`${packet.second}`,`${packet.centi}`,`${packet.micros}`, formatDate(date)]);
   }
   
   return sql;  
