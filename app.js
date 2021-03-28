@@ -265,6 +265,16 @@ var server = net.createServer(function(socket) {
         }
         console.log("Result: " ,result);
       });
+      
+      if(loraSqls.length > 0){
+        connection.query({sql: loraSql,timeout: 40000,},[loraSqls], function (err, result) {
+          if (err){
+            console.log("SQL err",err) 
+            //throw err;
+          }
+          console.log("Result: " ,result);
+        });
+      } 
     // }
     
   })
