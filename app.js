@@ -181,10 +181,10 @@ var server = net.createServer(function(socket) {
       }else if(type == 0x91){
         console.log("type: LoRa")
         type = dat[0];
-        var hour = dat[1],minute = dat[2], seconds = dat[3], centi = (dat[4] << 8 | dat[5]), micros = (dat[6] << 8 | dat[7]);
+        var seconds = dat[1],minute = dat[2], hour = dat[3], centi = (dat[5] << 8 | dat[4]), micros = (dat[7] << 8 | dat[6]);
         var imei = (dat[8] )
         mask = 256;
-        for(let k = 8; k <= 14; k++){
+        for(let k = 9; k <= 13; k++){
           console.log("CharCode at", k,": ",dat[k])
           imei+= (dat[k]*mask);
           mask=mask*256;
