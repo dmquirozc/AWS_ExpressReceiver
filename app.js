@@ -189,8 +189,8 @@ var server = net.createServer(function(socket) {
           imei+= (dat[k]*mask);
           mask=mask*256;
         } 
-        var aux = dat.slice(15,-1);
-        console.log("aux")
+        var aux = dat.slice(15,22);
+        console.log("aux:",aux)
         for(let j = 0; j < 6; j++)
         {
           if(j <3){
