@@ -326,6 +326,7 @@ function sqlInsert(packet, imei_){
   }else if(packet.type == 0x91)
   {
     console.log("Lora Messege:", packet)
+    var date = new Date().toISOString();
     // packets.push({
     //   type: type,
     //   imei: imei,
