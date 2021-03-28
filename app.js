@@ -255,7 +255,7 @@ var server = net.createServer(function(socket) {
     //var sql1 = "INSERT INTO `development`.`lora_devices_data` (`ime"
     console.log("SQLS:",sqls)
     var sql =  `INSERT INTO lora_devices_data (\`imei\`, \`latitude\`, \`longitude\`, \`millis\`, \`date_entry\`) VALUES ?`;
-    var loraSql = `INSERT INTO lora_devices_messages  (\`lora_imei\`, \`longitude\`, \`latitude\`, \`hour\`, \`seconds\`, \`minutes\`, \`centiseconds\`, \`microseconds\`, \`date_entry\`) VALUES ?`;
+    var loraSql = `INSERT INTO lora_devices_messages  (\`lora_imei\`, \`longitude\`, \`latitude\`, \`hour\`, \`minutes\`, \`seconds\`,\`centiseconds\`, \`microseconds\`, \`date_entry\`) VALUES ?`;
     // for(let i = 0; i < sqls.length; i++)
     // {
       connection.query({sql: sql,timeout: 40000,},[sqls], function (err, result) {
