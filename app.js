@@ -184,12 +184,13 @@ var server = net.createServer(function(socket) {
         var seconds = dat[1],minute = dat[2], hour = dat[3], centi = (dat[5] << 8 | dat[4]), micros = (dat[7] << 8 | dat[6]);
         var imei = (dat[8] )
         mask = 256;
-        for(let k = 9; k <= 13; k++){
+        for(let k = 9; k <= 14; k++){
           console.log("CharCode at", k,": ",dat[k])
           imei+= (dat[k]*mask);
           mask=mask*256;
         } 
-        var aux = dat.slice(0,14)
+        var aux = dat.slice(15,-1);
+        console.log("aux")
         for(let j = 0; j < 6; j++)
         {
           if(j <3){
@@ -230,7 +231,8 @@ var server = net.createServer(function(socket) {
             lonnum : ((((lon - 0.5 )/16777216.0) -0.5)*360.0)
           }
         })
-        dat = dat.slice(21,dat.length)
+        dat = dat.slice(22,dat.length)
+        console.log("Dat:",dat)
       }else{
         dat = dat.slice(1,-1)
       }
