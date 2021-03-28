@@ -230,7 +230,7 @@ var server = net.createServer(function(socket) {
             lonnum : ((((lon - 0.5 )/16777216.0) -0.5)*360.0)
           }
         })
-        dat = dat.slice(0,14)
+        dat = dat.slice(21,dat.length)
       }else{
         dat = dat.slice(1,-1)
       }
