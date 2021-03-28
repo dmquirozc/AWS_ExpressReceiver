@@ -247,7 +247,7 @@ var server = net.createServer(function(socket) {
       {
         sqls = sqls.concat(sqlInsert(packets[i],imei_));
       }else{
-        loraSqls = loraSql.concat(sqlInsert(packets[i],imei_));
+        loraSqls = loraSqls.concat(sqlInsert(packets[i],imei_));
       }
       
 
@@ -265,7 +265,7 @@ var server = net.createServer(function(socket) {
         }
         console.log("Result: " ,result);
       });
-      
+
       if(loraSqls.length > 0){
         connection.query({sql: loraSql,timeout: 40000,},[loraSqls], function (err, result) {
           if (err){
