@@ -177,6 +177,59 @@ var server = net.createServer(function(socket) {
         })
         console.log(packets[packets.length -1])
         dat = dat.slice( 10 + npos*6 ,dat.length);
+      
+      }else if(type == 0x91){
+        console.log("type: LoRa")
+        type = dat[0];
+        var hour = dat[1],minute = dat[2], seconds = dat[3], centi = (dat[4] << 8 | dat[5]), micros = (dat[6] << 8 | dat[7]);
+        var imei = (dat[8] )
+        mask = 256;
+        for(let k = 8; k <= 14; k++){
+          console.log("CharCode at", k,": ",dat[k])
+          imei+= (dat[k]*mask);
+          mask=mask*256;
+        } 
+        var aux = dat.slice(0,14)
+        for(let j = 0; j < 6; j++)
+        {
+          if(j <3){
+            
+            if(j%3){
+              lat+=aux[j]*mask;
+              mask=mask*256;
+            }else{
+              lat+=aux[j];
+              mask = 256;
+            }
+            console.log("lat:", lat,"j:",j)
+              
+          }else{
+           
+            if(j%3){
+              lon+=aux[j]*mask;
+              mask=mask*256;
+            }else{
+              lon+=aux[j];
+              mask = 256;
+            }
+            console.log("lon:", lon,"j:",j)
+          }
+        }
+        packets.push({
+          type: type,
+          imei: imei,
+          hour: hour,
+          minute: minute, 
+          second : seconds,
+          centi: centi,
+          micros:  micros,
+          position: {
+            lat: ((((lat - 0.5)/16777214.0) - 0.5)*180.0).toFixed(6),
+            lon: ((((lon - 0.5 )/16777216.0) -0.5)*360.0).toFixed(6),
+            latnum : ((((lat - 0.5)/16777214.0) - 0.5)*180.0),
+            lonnum : ((((lon - 0.5 )/16777216.0) -0.5)*360.0)
+          }
+        })
       }else{
         dat = dat.slice(1,-1)
       }
@@ -248,6 +301,9 @@ function sqlInsert(packet, imei_){
       sql.push([`${imei_}`, packet.positions[i].lat, packet.positions[i].lon, `${packet.time1}`, formatDate(date)]);
       
     }
+  }else if(packet.type == 0x91)
+  {
+    console.log("Lora Messege:", packet)
   }
   
   return sql;  
