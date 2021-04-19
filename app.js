@@ -314,7 +314,7 @@ function sqlInsert(packet, imei_){
   {
     var imei =  null, latitude = null, longitude = null, millis =  null; 
     //INSERT INTO  (`id_lora_devices_data`, `imei`, `latitude`, `longitude`, `millis`, `date_entry`) VALUES ('1', '111111111', '90.0', '-180.0', '11111', '2020-10-10 00:00:00');
-    var date =  new new Date(Date.now()-MS_PER_HOUR*4).toISOString();
+    var date =  new Date(Date.now()-MS_PER_HOUR*4).toISOString();
     sql.push([`${packet.imei}`, null, null, `${packet.time}`, `${formatDate(date)}`]);
 
   }else if(packet.type === 0x42)
