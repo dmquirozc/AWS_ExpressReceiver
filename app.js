@@ -25,7 +25,7 @@ var  connection  = mysql.createConnection({
 var server = net.createServer(function(socket) {
 	//socket.write('Echo server\r\n');
 	console.log("tcp connection");
-  socket.write("Date:" + new Date(Date.now()-MS_PER_HOUR*4).toISOString()+'\r\n');
+  socket.write("Date: " + new Date(Date.now()-MS_PER_HOUR*4).toISOString()+'\r\n');
 
   socket.on('data', data => 
   {
