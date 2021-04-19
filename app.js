@@ -7,6 +7,9 @@ var https = require('https');
 var privateKey  = fs.readFileSync('key.pem', 'utf8');
 var certificate = fs.readFileSync('cert.pem', 'utf8');
 const DEBUG = true;
+const MS_PER_MINUTE = 60000;
+const MS_PER_HOUR = MS_PER_MINUTE*60;
+var actualTime = new Date(Date.now()-MS_PER_HOUR*4);
 var credentials = {key: privateKey, cert: certificate};
 
 var types = {
@@ -311,13 +314,13 @@ function sqlInsert(packet, imei_){
   {
     var imei =  null, latitude = null, longitude = null, millis =  null; 
     //INSERT INTO  (`id_lora_devices_data`, `imei`, `latitude`, `longitude`, `millis`, `date_entry`) VALUES ('1', '111111111', '90.0', '-180.0', '11111', '2020-10-10 00:00:00');
-    var date =  new Date().toISOString();
+    var date =  new new Date(Date.now()-MS_PER_HOUR*4).toISOString();
     sql.push([`${packet.imei}`, null, null, `${packet.time}`, `${formatDate(date)}`]);
 
   }else if(packet.type === 0x42)
   {
     console.log("SQL for gps")
-    var date = new Date().toISOString();
+    var date = new Date(Date.now()-MS_PER_HOUR*4).toISOString();
     for(let i = 0; i < packet.npos; i++)
     {
       //sql.push([`${imei_}`, `${packet.positions[i].lat}`, `${packet.positions[i].lon}`, `${packet.time1}`, formatDate(date)]);
@@ -327,7 +330,7 @@ function sqlInsert(packet, imei_){
   }else if(packet.type == 0x91)
   {
     console.log("Lora Messege:", packet)
-    var date = new Date().toISOString();
+    var date = new Date(Date.now()-MS_PER_HOUR*4).toISOString();
     // packets.push({
     //   type: type,
     //   imei: imei,
