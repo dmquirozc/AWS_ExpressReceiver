@@ -9,24 +9,7 @@ var certificate = fs.readFileSync('cert.pem', 'utf8');
 const DEBUG = true;
 const MS_PER_MINUTE = 60000;
 const MS_PER_HOUR = MS_PER_MINUTE*60;
-var actualTime = new Date(Date.now()-MS_PER_HOUR*4);
 var credentials = {key: privateKey, cert: certificate};
-
-var types = {
-  imei: {
-    type: 1,
-    time: 4,
-    imei: 7
-  },
-  gps: {
-    type: 1,
-    time1: 4,
-    time2: 4,
-    n: 1,
-    positionX: 3,
-    positionY: 3
-  }
-}
 
 const port = 3000;
 const dataPort =  3001;
@@ -38,24 +21,12 @@ var  connection  = mysql.createConnection({
   database: "development"
 });
 
-// connection.connect(function(err) {
-//   if (err) 
-//   {
-//     if(DEBUG) console.log("Database err",err) 
-//     throw err;
-//   }
-//   if(DEBUG) console.log("Connected to database!");
- 
-// });
-
-
 
 var server = net.createServer(function(socket) {
 	//socket.write('Echo server\r\n');
 	console.log("tcp connection");
-  socket.on('connect', ()=>{
-    socket.write("Hola");
-  })
+  socket.write(new Date(Date.now()-MS_PER_HOUR*4).toISOString());
+
   socket.on('data', data => 
   {
     
