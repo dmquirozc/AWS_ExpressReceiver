@@ -167,7 +167,7 @@ var server = net.createServer(function(socket) {
         mask = 256;
         for(let k = 16; k <= 21; k++){
           console.log("CharCode at", k,": ",dat[k])
-          imei+= (dat[k]*mask);
+          self_imei+= (dat[k]*mask);
           mask=mask*256;
         } 
         var aux = dat.slice(22,27);
