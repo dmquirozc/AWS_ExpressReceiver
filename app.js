@@ -163,7 +163,14 @@ var server = net.createServer(function(socket) {
           imei+= (dat[k]*mask);
           mask=mask*256;
         } 
-        var aux = dat.slice(15,21);
+        var self_imei = (dat[15] )
+        mask = 256;
+        for(let k = 16; k <= 21; k++){
+          console.log("CharCode at", k,": ",dat[k])
+          imei+= (dat[k]*mask);
+          mask=mask*256;
+        } 
+        var aux = dat.slice(21,27);
         console.log("aux:",aux)
         var lat = 0, lon = 0;
         for(let j = 0; j < 6; j++)
@@ -194,6 +201,7 @@ var server = net.createServer(function(socket) {
         packets.push({
           type: type,
           imei: imei,
+          selfImei: self_imei,
           hour: hour,
           minute: minute, 
           second : seconds,
@@ -229,7 +237,7 @@ var server = net.createServer(function(socket) {
     //var sql1 = "INSERT INTO `development`.`lora_devices_data` (`ime"
     console.log("SQLS:",sqls)
     var sql =  `INSERT INTO lora_devices_data (\`imei\`, \`latitude\`, \`longitude\`, \`millis\`, \`date_entry\`) VALUES ?`;
-    var loraSql = `INSERT INTO lora_devices_messages  (\`lora_imei\`, \`longitude\`, \`latitude\`, \`hour\`, \`minutes\`, \`seconds\`,\`centiseconds\`, \`microseconds\`, \`date_entry\`) VALUES ?`;
+    var loraSql = `INSERT INTO lora_devices_messages  (\`lora_imei_sender\`, \`lora_imei_receiver\`,\`longitude\`, \`latitude\`, \`hour\`, \`minutes\`, \`seconds\`,\`centiseconds\`, \`microseconds\`, \`date_entry\`) VALUES ?`;
     // for(let i = 0; i < sqls.length; i++)
     // {
       connection.query({sql: sql,timeout: 40000,},[sqls], function (err, result) {
@@ -317,7 +325,7 @@ function sqlInsert(packet, imei_){
     //     lonnum : ((((lon - 0.5 )/16777216.0) -0.5)*360.0)
     //   }
     // })
-    sql.push([`${packet.imei}`, packet.position.lat, packet.position.lon, `${packet.hour}`,`${packet.minute}`,`${packet.second}`,`${packet.centi}`,`${packet.micros}`, formatDate(date)]);
+    sql.push([`${packet.imei}`,`${packet.selfImei}`, packet.position.lat, packet.position.lon, `${packet.hour}`,`${packet.minute}`,`${packet.second}`,`${packet.centi}`,`${packet.micros}`, formatDate(date)]);
   }
   
   return sql;  
