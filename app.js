@@ -198,6 +198,17 @@ var server = net.createServer(function(socket) {
             console.log("lon:", lon,"j:",j)
           }
         }
+
+        aux = dat.slice(29,32);
+        var snr_ = (aux[0])+ (aux[1]*256)+ (aux[2]*256*256);
+        var snr =   ((((snr_ - 0.5)/16777214.0) - 0.5)*256.0).toFixed(6);
+        aux = dat.slice(32,35);
+        var rssi_ = (aux[0])+ (aux[1]*256)+ (aux[2]*256*256);
+        var rssi =   ((((rssi_ - 0.5)/16777214.0) - 0.5)*256.0).toFixed(6);
+
+        aux = dat.slice(35,38);
+        var freqError_ = (aux[0])+ (aux[1]*256)+ (aux[2]*256*256);
+        var freqError =   ((((freqError_ - 0.5)/16777214.0) - 0.5)*256.0).toFixed(6);
         packets.push({
           type: type,
           imei: imei,
@@ -207,6 +218,9 @@ var server = net.createServer(function(socket) {
           second : seconds,
           centi: centi,
           micros:  micros,
+          snr: snr,
+          rssi: rssi,
+          freqError: freqError,
           position: {
             lat: ((((lat - 0.5)/16777214.0) - 0.5)*180.0).toFixed(6),
             lon: ((((lon - 0.5 )/16777216.0) -0.5)*360.0).toFixed(6),
@@ -214,7 +228,8 @@ var server = net.createServer(function(socket) {
             lonnum : ((((lon - 0.5 )/16777216.0) -0.5)*360.0)
           }
         })
-        dat = dat.slice(21,dat.length)
+
+        dat = dat.slice(38,dat.length)
         console.log("Dat:",dat)
       }else{
         dat = dat.slice(1,-1)
