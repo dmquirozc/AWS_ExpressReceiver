@@ -170,7 +170,7 @@ var server = net.createServer(function(socket) {
           self_imei+= (dat[k]*mask);
           mask=mask*256;
         } 
-        var aux = dat.slice(22,27);
+        var aux = dat.slice(22,28);
         console.log("aux:",aux)
         var lat = 0, lon = 0;
         for(let j = 0; j < 6; j++)
