@@ -201,14 +201,14 @@ var server = net.createServer(function(socket) {
 
         aux = dat.slice(28,31);
         var snr_ = (aux[0])+ (aux[1]*256)+ (aux[2]*256*256);
-        var snr =   ((((snr_ - 0.5)/16777214.0) - 0.5)*256.0).toFixed(6);
+        var snr =   ((((snr_ - 0.5)/16777214.0) - 0.5)*100.0).toFixed(6);
         aux = dat.slice(31,34);
         var rssi_ = (aux[0])+ (aux[1]*256)+ (aux[2]*256*256);
-        var rssi =   ((((rssi_ - 0.5)/16777214.0) - 0.5)*256.0).toFixed(6);
+        var rssi =   ((((rssi_ - 0.5)/16777214.0) - 0.5)*100.0).toFixed(6);
 
         aux = dat.slice(34,37);
         var freqError_ = (aux[0])+ (aux[1]*256)+ (aux[2]*256*256);
-        var freqError =   ((((freqError_ - 0.5)/16777214.0) - 0.5)*256.0).toFixed(6);
+        var freqError =   ((((freqError_ - 0.5)/16777214.0) - 0.5)*100.0).toFixed(6);
         packets.push({
           type: type,
           imei: imei,
