@@ -252,7 +252,7 @@ var server = net.createServer(function(socket) {
     //var sql1 = "INSERT INTO `development`.`lora_devices_data` (`ime"
     console.log("SQLS:",sqls)
     var sql =  `INSERT INTO lora_devices_data (\`imei\`, \`latitude\`, \`longitude\`, \`millis\`, \`date_entry\`) VALUES ?`;
-    var loraSql = `INSERT INTO lora_devices_messages  (\`lora_imei_sender\`, \`lora_imei_receiver\`,\`longitude\`, \`latitude\`, \`hour\`, \`minutes\`, \`seconds\`,\`centiseconds\`, \`microseconds\`, \`date_entry\`) VALUES ?`;
+    var loraSql = `INSERT INTO lora_devices_messages  (\`lora_imei_sender\`, \`lora_imei_receiver\`,\`longitude\`, \`latitude\`,  \`receiver_snr\`, \`receiver_rssi\` , \`receiver_frequency_error\` ,\`hour\`, \`minutes\`, \`seconds\`,\`centiseconds\`, \`microseconds\`, \`date_entry\`) VALUES ?`;
     // for(let i = 0; i < sqls.length; i++)
     // {
       connection.query({sql: sql,timeout: 40000,},[sqls], function (err, result) {
@@ -340,7 +340,7 @@ function sqlInsert(packet, imei_){
     //     lonnum : ((((lon - 0.5 )/16777216.0) -0.5)*360.0)
     //   }
     // })
-    sql.push([`${packet.imei}`,`${packet.selfImei}`, packet.position.lat, packet.position.lon, `${packet.hour}`,`${packet.minute}`,`${packet.second}`,`${packet.centi}`,`${packet.micros}`, formatDate(date)]);
+    sql.push([`${packet.imei}`,`${packet.selfImei}`, packet.position.lat, packet.position.lon,packet.snr , packet.rssi,packet.freqError , `${packet.hour}`,`${packet.minute}`,`${packet.second}`,`${packet.centi}`,`${packet.micros}`, formatDate(date)]);
   }
   
   return sql;  
